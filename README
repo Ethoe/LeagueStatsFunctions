@@ -1,0 +1,11 @@
+Put champImageDownloader.py, pixelValue.py, and champSlice.py
+into the same folder, the folder should contain the folders
+'ChampSlice', 'ChampSplash', and 'ChampSquare'.
+
+1) To operate go into terminal and navigate to where the files are.
+2) Using the command 'python3' run 'python3 champImageDownloader.py'
+3) To get the dimensions of the slices, open the champSlice.py file and
+  change the values at the bottom of the slicer method and change it from
+  slicer(142, 433) to slicer(height of slice, width of slice)
+4) Finally running 'python3 champSlice.py' will generate the slices
+5) If there is an error in modules run 'pip install numpy' and 'pip install opencv-python'
