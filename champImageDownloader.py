@@ -2,6 +2,7 @@
 # 3/24/19
 # Function to get all of the champs as pictures and updates whenever it is run
 import json
+import os
 import urllib.request
 
 # Getting the current version number of data dragon
@@ -15,6 +16,12 @@ naDDragonChampion = 'http://ddragon.leagueoflegends.com/cdn/' + champVersion + '
 with urllib.request.urlopen(naDDragonChampion) as champions:
     information = json.loads(champions.read().decode())
     champions = information['data'].keys()
+
+# Check if directory exists
+if not os.path.exists('ChampSplash'):
+    os.makedirs('ChampSplash')
+if not os.path.exists('ChampSquare'):
+    os.makedirs('ChampSquare')
 
 # Downloading all of the new champ squares
 for champion in champions:
