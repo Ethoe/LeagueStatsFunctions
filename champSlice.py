@@ -4,7 +4,6 @@
 from pixelValue import Imaging as im
 import os
 import cv2
-import imutils
 
 
 def slicer(maxHeight, maxWidth):
@@ -50,11 +49,20 @@ def slicer(maxHeight, maxWidth):
     return
 
 
+while True:
+    userInput = input("Desired slice height in pixels: ")
+    try:
+        height = int(userInput)
+        break
+    except ValueError:
+        print("Needs to be an integer value.")
 
-spl = cv2.imread('ChampSelect2.png')
-sqr = cv2.imread('Quit.png', 0)
-find = im.find(spl, sqr, True)
+while True:
+    userInput = input("Desired slice width in pixels: ")
+    try:
+        width = int(userInput)
+        break
+    except ValueError:
+        print("Needs to be an integer value.")
 
-print(str(find))
-cv2.imshow('Match', spl)
-cv2.waitKey(0)
+slicer(height, width)
