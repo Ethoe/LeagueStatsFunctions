@@ -29,22 +29,33 @@ class Imaging:
 
                 # Storing values of this scale and seeing if it is higher than the current best
                 edged = cv2.Canny(resized, 50, 200)
-                result = cv2.matchTemplate(edged, toFind, cv2.TM_CCOEFF)
+                result = cv2.matchTemplate(edged, toFind, cv2.TM_CCOEFF_NORMED)
                 (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
 
                 if found is None or maxVal > found[0]:
-                    found = (maxVal, maxLoc, r)
+                    found = (maxVal, maxLoc, r, result)
             toFind = cv2.flip(toFind, 1)
 
         # Unpacking best scale and storing the info into toReturn var
-        (_, maxLoc, r) = found
+        (_, maxLoc, r, maxVal) = found
         start = (int(maxLoc[0] * r), int(maxLoc[1] * r))
         end = (int((maxLoc[0] + w) * r), int((maxLoc[1] + h) * r))
 
-        pointSize = (start, end[0] - start[0], end[1] - start[1], r)
+        stuff = np.where(maxVal >= .2)
+
+        for pt in zip(*stuff[::-1]):
+            cv2.rectangle(image, (int(pt[0] * r), int(pt[1] * r)), (int((pt[0] + w) * r), int((pt[1] + h) * r)), (0, 255, 255), 2)
+
+        pointSize = (start, end[0] - start[0], end[1] - start[1], np.array(stuff).size != 0)
 
         # If debug mode is on, draws a yellow rectangle around found area
         if debug:
             cv2.rectangle(image, start, end, (0, 255, 255), 2)
 
         return pointSize
+
+spl = cv2.imread('ChampSplash/Aatrox.jpg')
+sqr = cv2.imread('ChampSquare/Aatrox.png', 0)
+print(str(Imaging.find(spl, sqr, False)))
+cv2.imshow('name', spl)
+cv2.waitKey(0)
