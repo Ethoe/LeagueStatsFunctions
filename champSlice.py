@@ -1,7 +1,7 @@
 # Ryan Outtrim
 # 3/25/19
 # Generates slices of a champion splash art given hieght and width needed
-from pixelValue import Imaging as im
+from imageParser import Imaging as im
 import os
 import cv2
 

@@ -4,7 +4,9 @@
 import numpy as np
 import cv2
 import imutils
-import os
+import pytesseract
+
+
 
 class Imaging:
 
@@ -55,3 +57,24 @@ class Imaging:
             cv2.rectangle(image, start, end, (0, 255, 255), 2)
 
         return pointSize
+
+    @staticmethod
+    def findText():
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
+        image = cv2.imread(r'C:\Users\Ryan O\Desktop\Tester\scoreBoardNames.jpg', cv2.IMREAD_GRAYSCALE)
+        thresh = 50
+        image = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        #image = cv2.blur(image, (2, 2))
+        image = cv2.resize(image, dsize=(image.shape[1]*2, image.shape[0]*2))
+        image = cv2.blur(image, (4, 4))
+        cv2.imshow('yes', image)
+        #print(pytesseract.image_to_string(image, config='-c tessedit_char_whitelist=0123456789 -psm 6 --oem 0'))
+        print(pytesseract.image_to_string(image, config='-psm 6'))
+        cv2.waitKey(0)
+        # image = Image.open(r'C:\Users\Ryan O\Desktop\Tester\scoreBoard - Copy.jpg', 'r')
+
+Imaging.findText()
+
+
+
+
