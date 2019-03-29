@@ -7,12 +7,14 @@ import cv2
 
 
 def slicer(maxHeight, maxWidth):
+    if not os.path.exists('ChampSlice'):
+        os.makedirs('ChampSlice')
     for filename in os.listdir('ChampSquare'):
         # Extracting champion name from file
         champName = filename[:-4]
         currentSplash = cv2.imread('ChampSplash/' + champName + '.jpg')
         currentSquare = cv2.imread('ChampSquare/' + filename, 0)
-        faceRegion = im.find(currentSplash, currentSquare)
+        faceRegion = im.find(currentSplash, currentSquare, depth=True)
 
         # Used to center the champions face around their height, puts them 2/3rds from the left width wise
         height = int((maxHeight - faceRegion[1]) / 2)
