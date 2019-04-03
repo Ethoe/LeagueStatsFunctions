@@ -7,7 +7,6 @@ import imutils
 import pytesseract
 
 
-
 class Imaging:
 
     # Function to find a location of given template in full image
@@ -74,8 +73,6 @@ class Imaging:
         print(list)
         cv2.waitKey(0)
         # image = Image.open(r'C:\Users\Ryan O\Desktop\Tester\scoreBoard - Copy.jpg', 'r')
-
-Imaging.findText()
 
 
 
