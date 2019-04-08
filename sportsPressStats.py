@@ -139,8 +139,12 @@ def playerMaker(jsonPlayer, gamer):
     return gamer
 
 
-def resultMaker(totalDmg, totalKills, totalDeaths, totalAssists, totalGold):
-    return ' | '.join([str(totalDmg), str(totalKills), str(totalDeaths), str(totalAssists), str(totalGold)])
+def resultMaker(totalDmg, totalKills, totalDeaths, totalAssists, totalGold, winLoss):
+    if winLoss == 'Win':
+        string = "W"
+    else:
+        string = "L"
+    return ' | '.join([string, str(totalDmg), str(totalKills), str(totalDeaths), str(totalAssists), str(totalGold)])
 
 
 def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin, blueStat, redStat):
@@ -162,7 +166,7 @@ def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin
         for user in blueTeam:
             gamer = blueTeam[user]
             if counter == 0:
-                result = resultMaker(blueStat[0], blueStat[1], blueStat[2], blueStat[3], blueStat[4])
+                result = resultMaker(blueStat[0], blueStat[1], blueStat[2], blueStat[3], blueStat[4], teamOne)
                 writer.writerow({fields[0]: date, fields[1]: time, fields[2]: 'Online', fields[3]: blueTeamName,
                                  fields[4]: result, fields[5]: teamOne, fields[6]: gamer.name,
                                  fields[7]: gamer.cs, fields[8]: gamer.dmgDealt, fields[9]: gamer.kills,
@@ -177,7 +181,7 @@ def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin
         for user in redTeam:
             gamer = redTeam[user]
             if counter == 0:
-                result = resultMaker(redStat[0], redStat[1], redStat[2], redStat[3], redStat[4])
+                result = resultMaker(redStat[0], redStat[1], redStat[2], redStat[3], redStat[4], teamTwo)
                 writer.writerow({fields[3]: redTeamName, fields[4]: result, fields[5]: teamTwo,
                                  fields[6]: gamer.name, fields[7]: gamer.cs, fields[8]: gamer.dmgDealt,
                                  fields[9]: gamer.kills, fields[10]: gamer.deaths, fields[11]: gamer.assists,

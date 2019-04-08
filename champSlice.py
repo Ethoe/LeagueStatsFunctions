@@ -42,6 +42,8 @@ def slicer(maxHeight, maxWidth):
         yLeft = loc[0] - width * 2 + leftFix - rightFix
         yRight = loc[0] + width + faceRegion[2] + widthDelta + leftFix - rightFix
 
+        print(str(xBot-xTop) + " " + str(yRight-yLeft))
+
         crop = currentSplash[xTop:xBot, yLeft:yRight]
 
         # Saves the slice in a folder for slices under their champion name
