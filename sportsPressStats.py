@@ -85,6 +85,8 @@ def statGatherer(players, matchID, apiKey):
     request = requests.get(matchUrl)
     jsonData = request.json()
 
+    time = jsonData['gameDuration']
+
     for participant in range(10):
         champPlayed = int(jsonData['participants'][participant]['championId'])
         jsonPlayer = jsonData['participants'][participant]['stats']
@@ -111,7 +113,7 @@ def statGatherer(players, matchID, apiKey):
                 redStat[4] += gamer.gold
 
     blueWin = jsonData['teams'][0]['win']
-    return blueTeam, redTeam, blueWin, blueStat, redStat
+    return blueTeam, redTeam, blueWin, blueStat, redStat, time
 
 
 def playerMaker(jsonPlayer, gamer):
@@ -147,8 +149,8 @@ def resultMaker(totalDmg, totalKills, totalDeaths, totalAssists, totalGold, winL
     return ' | '.join([string, str(totalDmg), str(totalKills), str(totalDeaths), str(totalAssists), str(totalGold)])
 
 
-def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin, blueStat, redStat):
-    with open('match.csv', mode='w') as csvFile:
+def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin, blueStat, redStat, length):
+    with open('outputMatch.csv', mode='w') as csvFile:
         fields = ['Date', 'Time', 'Venue', 'Teams', 'Results', 'Outcome',
                   'Players', 'CS', 'Damage Dealt', 'Kills', 'Deaths', 'Assists', 'Gold']
 
@@ -192,6 +194,48 @@ def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin
                                  fields[9]: gamer.kills, fields[10]: gamer.deaths, fields[11]: gamer.assists,
                                  fields[12]: gamer.gold})
 
+    with open('postgameStats.csv', mode='w') as csvFile:
+        fields = ['Player', 'Kills', 'Deaths', 'Assists', 'Damage Share', 'DPM',
+                  'PlayerScore', 'Kill Participation', 'Damage Dealt', 'CS', 'Gold']
+
+        writer = csv.DictWriter(csvFile, fieldnames=fields, delimiter=',', lineterminator='\n')
+        writer.writeheader()
+
+        blueKills = 0
+        blueDmg = 0
+        redKills = 0
+        redDmg = 0
+
+        for user in blueTeam:
+            gamer = blueTeam[user]
+            blueKills += gamer.kills
+            blueDmg += gamer.dmgDealt
+        for user in redTeam:
+            gamer = redTeam[user]
+            redKills += gamer.kills
+            redDmg += gamer.dmgDealt
+
+        for user in blueTeam:
+            gamer = blueTeam[user]
+            dmgShare = gamer.dmgDealt/blueDmg
+            DPM = gamer.dmgDealt/(length/60)
+            killShare = gamer.kills/blueKills
+            writer.writerow({fields[0]: gamer.name, fields[1]: gamer.kills, fields[2]: gamer.deaths,
+                             fields[3]: gamer.assists, fields[4]: dmgShare, fields[5]: DPM,
+                             fields[6]: gamer.playerScore, fields[7]: killShare, fields[8]: gamer.dmgDealt,
+                             fields[9]: gamer.cs, fields[10]: gamer.gold})
+
+        for user in redTeam:
+            gamer = redTeam[user]
+            dmgShare = gamer.dmgDealt/redDmg
+            DPM = gamer.dmgDealt/(length/60)
+            killShare = gamer.kills/redKills
+            writer.writerow({fields[0]: gamer.name, fields[1]: gamer.kills, fields[2]: gamer.deaths,
+                             fields[3]: gamer.assists, fields[4]: dmgShare, fields[5]: DPM,
+                             fields[6]: gamer.playerScore, fields[7]: killShare, fields[8]: gamer.dmgDealt,
+                             fields[9]: gamer.cs, fields[10]: gamer.gold})
+
+
     return
 
 
@@ -201,14 +245,14 @@ def driver():
     stats = statGatherer(game[0], game[1], apiKey)
     if game[6]:
         if stats[2] == 'Win':
-            csvReturn(stats[0], stats[1], game[2], game[3], game[4], game[5], True, stats[3], stats[4])
+            csvReturn(stats[0], stats[1], game[2], game[3], game[4], game[5], True, stats[3], stats[4], stats[5])
         else:
-            csvReturn(stats[0], stats[1], game[2], game[3], game[4], game[5], False, stats[3], stats[4])
+            csvReturn(stats[0], stats[1], game[2], game[3], game[4], game[5], False, stats[3], stats[4], stats[5])
     else:
         if stats[2] == 'Win':
-            csvReturn(stats[1], stats[0], game[2], game[3], game[5], game[4], False, stats[4], stats[3])
+            csvReturn(stats[1], stats[0], game[2], game[3], game[5], game[4], False, stats[4], stats[3], stats[5])
         else:
-            csvReturn(stats[1], stats[0], game[2], game[3], game[5], game[4], True, stats[4], stats[3])
+            csvReturn(stats[1], stats[0], game[2], game[3], game[5], game[4], True, stats[4], stats[3], stats[5])
 
 
 driver()
