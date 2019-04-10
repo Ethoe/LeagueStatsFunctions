@@ -60,8 +60,7 @@ def getTeam(filename):
                     home = False
                 counter += 1
             else:
-                champNumber = champions[row[1]]['key']
-                players[row[0]] = champNumber
+                players[row[0]] = 0
 
     return players, matchID, date, time, blueTeamName, redTeamName, home
 
@@ -87,30 +86,31 @@ def statGatherer(players, matchID, apiKey):
 
     time = jsonData['gameDuration']
 
-    for participant in range(10):
-        champPlayed = int(jsonData['participants'][participant]['championId'])
+    participant = 0
+    for user in blueTeam:
         jsonPlayer = jsonData['participants'][participant]['stats']
-        for user in blueTeam:
-            gamer = blueTeam[user]
-            if champPlayed is int(gamer.champNumber):
-                gamer.ID = participant
-                playerMaker(jsonPlayer, gamer)
-                blueStat[0] += gamer.dmgDealt
-                blueStat[1] += gamer.kills
-                blueStat[2] += gamer.deaths
-                blueStat[3] += gamer.assists
-                blueStat[4] += gamer.gold
+        gamer = blueTeam[user]
+        gamer.ID = participant
+        playerMaker(jsonPlayer, gamer)
+        blueStat[0] += gamer.dmgDealt
+        blueStat[1] += gamer.kills
+        blueStat[2] += gamer.deaths
+        blueStat[3] += gamer.assists
+        blueStat[4] += gamer.gold
+        participant += 1
 
-        for user in redTeam:
-            gamer = redTeam[user]
-            if champPlayed == int(gamer.champNumber):
-                gamer.ID = participant
-                playerMaker(jsonPlayer, gamer)
-                redStat[0] += gamer.dmgDealt
-                redStat[1] += gamer.kills
-                redStat[2] += gamer.deaths
-                redStat[3] += gamer.assists
-                redStat[4] += gamer.gold
+    for user in redTeam:
+        gamer = redTeam[user]
+        jsonPlayer = jsonData['participants'][participant]['stats']
+        gamer.ID = participant
+        playerMaker(jsonPlayer, gamer)
+        redStat[0] += gamer.dmgDealt
+        redStat[1] += gamer.kills
+        redStat[2] += gamer.deaths
+        redStat[3] += gamer.assists
+        redStat[4] += gamer.gold
+        participant += 1
+
 
     blueWin = jsonData['teams'][0]['win']
     return blueTeam, redTeam, blueWin, blueStat, redStat, time
@@ -150,7 +150,7 @@ def resultMaker(totalDmg, totalKills, totalDeaths, totalAssists, totalGold, winL
 
 
 def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin, blueStat, redStat, length):
-    with open('outputMatch.csv', mode='w') as csvFile:
+    with open('outputMatch.csv', mode='w', encoding='utf-8') as csvFile:
         fields = ['Date', 'Time', 'Venue', 'Teams', 'Results', 'Outcome',
                   'Players', 'CS', 'Damage Dealt', 'Kills', 'Deaths', 'Assists', 'Gold']
 
@@ -194,7 +194,7 @@ def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin
                                  fields[9]: gamer.kills, fields[10]: gamer.deaths, fields[11]: gamer.assists,
                                  fields[12]: gamer.gold})
 
-    with open('postgameStats.csv', mode='w') as csvFile:
+    with open('postgameStats.csv', mode='w', encoding='utf-8') as csvFile:
         fields = ['Player', 'Kills', 'Deaths', 'Assists', 'Damage Share', 'DPM',
                   'PlayerScore', 'Kill Participation', 'Damage Dealt', 'CS', 'Gold']
 
