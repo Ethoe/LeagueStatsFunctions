@@ -150,7 +150,8 @@ def resultMaker(totalDmg, totalKills, totalDeaths, totalAssists, totalGold, winL
 
 
 def csvReturn(blueTeam, redTeam, date, time, blueTeamName, redTeamName, firstWin, blueStat, redStat, length):
-    with open('outputMatch.csv', mode='w', encoding='utf-8') as csvFile:
+    fileName = blueTeamName + " vs " + redTeamName + ".csv"
+    with open(fileName, mode='w', encoding='utf-8') as csvFile:
         fields = ['Date', 'Time', 'Venue', 'Teams', 'Results', 'Outcome',
                   'Players', 'CS', 'Damage Dealt', 'Kills', 'Deaths', 'Assists', 'Gold']
 
