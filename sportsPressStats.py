@@ -51,16 +51,19 @@ def getTeam(filename):
                 counter += 1
             elif counter == 3:
                 blueTeamName = row[1]
-                if row[0] == str('Home'):
-                    home = True
                 counter += 1
             elif counter == 4:
                 redTeamName = row[1]
-                if row[0] == str('Home'):
+                counter += 1
+            elif counter == 5:
+                if row[1] == str('Blue'):
+                    home = True
+                    print('Its lit!')
+                else:
                     home = False
                 counter += 1
             else:
-                players[row[0]] = 0
+                players[row[1]] = 0
 
     return players, matchID, date, time, blueTeamName, redTeamName, home
 
